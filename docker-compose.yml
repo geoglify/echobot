@@ -1,0 +1,32 @@
+services:
+
+    openWebUI:
+        image: ghcr.io/open-webui/open-webui:main
+        restart: always
+        ports:
+            - "5000:8080"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - open-webui-local:/app/backend/data
+
+    ollama:
+        image: ollama/ollama
+        ports:
+            - "11434:11434"
+        devices:
+            - nvidia.com/gpu=all
+        command:
+            - bash
+            - -c
+            - |
+                nvidia-smi -L
+        volumes:
+            - ollama-local:/root/.ollama
+            - ./entrypoint.sh:/entrypoint.sh
+        
+        entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+
+volumes:
+    ollama-local:
+    open-webui-local:
