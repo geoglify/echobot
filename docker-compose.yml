@@ -23,9 +23,21 @@ services:
                 nvidia-smi -L
         volumes:
             - ollama-local:/root/.ollama
-            - ./entrypoint.sh:/entrypoint.sh
+            - ./ollama/entrypoint.sh:/entrypoint.sh
         
         entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+        
+    app:
+        build:
+            context: ./app
+            dockerfile: Dockerfile
+        restart: always
+        ports:
+            - "5001:5001"
+        environment:
+            - DATABASE_URL=postgresql://dbadmin:geoglify2024@host.docker.internal:5432/geoglify
+        volumes:
+            - ./app/:/app
 
 volumes:
     ollama-local:
